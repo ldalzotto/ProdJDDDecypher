@@ -1,0 +1,15 @@
+<mat-grid-list cols="1" rowHeight="75px">
+  <mat-grid-tile>
+    <h4>ProdJDDDecypher</h4>
+    <h3>Parce que la prod ne fait que des select * </h3>
+  </mat-grid-tile>
+</mat-grid-list>
+<nav mat-tab-nav-bar>
+  <a mat-tab-link *ngFor="let tabName of this.getTabNames()"
+     routerLink="{{this.getTemplatedTabComponentFromTabName(tabName)}}"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+    {{tabName}}
+  </a>
+</nav>
+<router-outlet></router-outlet>
