@@ -23,4 +23,8 @@ public class PartedInputFile {
     public byte[] getFileContent() {
         return fileContent;
     }
+
+    public PartedInputKey getPartedInputKey() {
+        return partedInputKey;
+    }
 }

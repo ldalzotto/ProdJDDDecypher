@@ -1,12 +1,15 @@
-import {FileBO} from '../objects/FileBO';
+import {SimpleFile} from '../objects/SimpleFile';
 import {FileCypherDTO} from '../api/FileCypherDTO';
+import {PartedSimpleFile} from "../objects/PartedSimpleFile";
 
-export class FileBOtoDTO {
+export class PartedSimpleFileToDTO {
 
-  public static convert(fileBO: FileBO): FileCypherDTO {
+  public static convert(partedFile: PartedSimpleFile): FileCypherDTO {
 
-    if (fileBO) {
-      const filecypherDTO: FileCypherDTO = new FileCypherDTO(fileBO.fileAsBytes, fileBO.fileName, fileBO.part);
+    if (partedFile) {
+      const filecypherDTO: FileCypherDTO =
+        new FileCypherDTO(partedFile.getArrayBuffer(), partedFile.getFilename(),
+            partedFile.part);
       return filecypherDTO;
     }
 

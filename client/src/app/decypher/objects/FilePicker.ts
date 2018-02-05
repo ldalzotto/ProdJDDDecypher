@@ -1,17 +1,18 @@
 import {ElementRef} from '@angular/core';
 import {IFileElementRef} from './IFileElementRef';
 import {CustomFileReader} from './CustomFileReader';
-import {FileBO} from './FileBO';
+import {SimpleFile} from './SimpleFile';
 import {ArrayBufferSlicer} from './ArrayBufferSlicer';
+import {PartedSimpleFile} from "./PartedSimpleFile";
 
 export class FilePicker {
 
   private htmlFileComponent: IFileElementRef;
-  private _allFilesAsString: Array<FileBO>;
+  private _partedFiles: Array<PartedSimpleFile>;
 
   constructor(htmlFileComponent: ElementRef) {
     this.htmlFileComponent = htmlFileComponent;
-    this._allFilesAsString = new Array<FileBO>();
+    this._partedFiles = new Array<PartedSimpleFile>();
   }
 
   public simulateClick(): void {
@@ -21,7 +22,7 @@ export class FilePicker {
 
   public readAllFiles(): Promise<boolean> {
 
-    this.allFilesAsString = new Array<FileBO>();
+    this.partedFiles = new Array<PartedSimpleFile>();
     const self: FilePicker = this;
 
     return new Promise<boolean>((resolve, reject) => {
@@ -29,23 +30,23 @@ export class FilePicker {
       const fileList: FileList = this.htmlFileComponent.nativeElement.files;
       const fileNumber = fileList.length;
 
-      const readPromiseList: Array<Promise<FileBO>> = new Array<Promise<FileBO>>();
+      const readPromiseList: Array<Promise<SimpleFile>> = new Array<Promise<SimpleFile>>();
       for (let i = 0; i < fileNumber; i++) {
         const currentFile: File = fileList.item(i);
         const customFileReader: CustomFileReader = new CustomFileReader(currentFile);
-        const readPromise: Promise<FileBO> = customFileReader.readFile();
+        const readPromise: Promise<SimpleFile> = customFileReader.readFile();
         readPromiseList.push(readPromise);
       }
 
       Promise.all(readPromiseList)
-        .then((value: FileBO[]) => {
+        .then((value: SimpleFile[]) => {
           for (const fileString of value) {
             console.log(fileString);
             const arrayBufferSclicer: ArrayBufferSlicer = new ArrayBufferSlicer(fileString);
 
-            const splittedFiles: Array<FileBO> = arrayBufferSclicer.slice();
+            const splittedFiles: Array<PartedSimpleFile> = arrayBufferSclicer.slice();
             for (const file of splittedFiles) {
-              self.allFilesAsString.push(file);
+              self.partedFiles.push(file);
             }
           }
           resolve(true);
@@ -55,24 +56,24 @@ export class FilePicker {
   }
 
   public clearFile(): void {
-    for (const file of this.allFilesAsString) {
+    for (const file of this.partedFiles) {
       file.clearBytes();
     }
   }
 
   public getAllFileNames(): Array<string> {
     const returnArray: Array<string> = new Array<string>();
-    for (const fileBO of this.allFilesAsString) {
-      returnArray.push(fileBO.fileName);
+    for (const partedFile of this.partedFiles) {
+      returnArray.push(partedFile.getFilename());
     }
     return returnArray;
   }
 
-  get allFilesAsString(): Array<FileBO> {
-    return this._allFilesAsString;
+  get partedFiles(): Array<PartedSimpleFile> {
+    return this._partedFiles;
   }
 
-  set allFilesAsString(value: Array<FileBO>) {
-    this._allFilesAsString = value;
+  set partedFiles(value: Array<PartedSimpleFile>) {
+    this._partedFiles = value;
   }
 }

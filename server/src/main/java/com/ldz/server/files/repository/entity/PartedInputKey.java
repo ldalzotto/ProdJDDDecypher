@@ -28,4 +28,11 @@ public class PartedInputKey implements Serializable {
     @Column(name = "PART")
     private Integer part;
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public Integer getPart() {
+        return part;
+    }
 }

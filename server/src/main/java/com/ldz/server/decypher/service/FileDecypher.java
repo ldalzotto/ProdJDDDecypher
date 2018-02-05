@@ -1,5 +1,9 @@
 package com.ldz.server.decypher.service;
 
+import com.ldz.server.decypher.domain.CsvContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -8,41 +12,27 @@ import java.util.List;
 
 public class FileDecypher {
 
-    private List<byte[]> nestedBytes = new ArrayList<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileDecypher.class);
+    private static final int MAX_BYTES_SIZE = 5000000;
+    private static final int RETOUR_CHARIOT_BYTES_NUMBER = 10;
 
-    public FileDecypher(List<byte[]> nestedBytes) {
+    private byte[] nestedBytes;
+
+    public FileDecypher(byte[] nestedBytes) {
         this.nestedBytes = nestedBytes;
     }
 
-    public String decypherFile() {
+    public byte[] decypherFile() {
         try {
 
-            //bytes of retour rariot
-            int retourChariotBytesNumber = 10;
+                String[] splittedLine = new String(nestedBytes, "UTF-8").split("\\n");
+                CsvConverter csvConverter = new CsvConverter('|', splittedLine);
+                CsvContainer csvContainer = csvConverter.processFile();
+                return new CsvToCql(csvContainer).convertCsvToCql();
 
-            for (int i = 0; i < this.nestedBytes.size(); i++) {
-
-                if (nestedBytes.get(i).length == 5000000 &&
-                        nestedBytes.get(i)[nestedBytes.get(i).length - 1] != retourChariotBytesNumber) {
-
-                    byte[] nextByteArray = nestedBytes.get(i + 1);
-                    List<Byte> byteAccumulator = new ArrayList<>();
-                    byte currentByte = nextByteArray[0];
-                    while (currentByte != retourChariotBytesNumber) {
-                        byteAccumulator.add(currentByte);
-                        currentByte = nextByteArray[byteAccumulator.size()];
-                    }
-
-                }
-
-                String[] splittedLine = new String(nestedBytes.get(0), "UTF-8").split("\\n");
-                System.out.println("OK");
-            }
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-
-        return "";
 
     }
 }

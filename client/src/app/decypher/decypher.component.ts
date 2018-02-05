@@ -31,7 +31,7 @@ export class DecypherComponent implements OnInit {
     this.readFiles();
     console.log('Saving files');
     this.readAllFilesPromise.then((onFulfilled: boolean) => {
-      this.decyperApiService.saveFiles(this.filePicker.allFilesAsString);
+      this.decyperApiService.saveFiles(this.filePicker.partedFiles);
       this.filePicker.clearFile();
     });
   }

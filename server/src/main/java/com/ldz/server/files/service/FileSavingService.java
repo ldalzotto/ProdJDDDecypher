@@ -1,6 +1,7 @@
 package com.ldz.server.files.service;
 
 import com.ldz.server.files.domain.InputFileBO;
+import com.ldz.server.files.domain.PartedInputFileBO;
 import com.ldz.server.files.repository.InputFilesRepository;
 import com.ldz.server.files.repository.PartedInputFilesRepository;
 import com.ldz.server.files.repository.entity.InputFile;
@@ -22,6 +23,12 @@ public class FileSavingService {
 
     public InputFileBO getFileByFileName(String fileName) {
         return this.getAllFilespartFromFilename(fileName);
+    }
+
+    public PartedInputFileBO getPartedFile(String filename, Integer partnb){
+        PartedInputFile partedInputFile = this.partedInputFilesRepository.getByPartedInputKeyEquals
+                (new PartedInputKey(filename, partnb));
+        return new PartedInputFileBO(partedInputFile);
     }
 
     public void saveFile(byte[] content, String fileName, Integer part) {
@@ -48,10 +55,12 @@ public class FileSavingService {
 
         Integer fileNb = inputFileBO.getFileNb();
         for (int i = 0; i <= fileNb; i++) {
-            PartedInputFile partedInputFile = this.partedInputFilesRepository.getByPartedInputKeyEquals(new PartedInputKey(inputFileBO));
-            inputFileBO.getRawContents().add(partedInputFile.getFileContent());
+            PartedInputFileBO partedInputFileBO = this.getPartedFile(filename, i);
+                inputFileBO.getRawContents().add(partedInputFileBO.getRawContent());
         }
         return inputFileBO;
     }
+
+
 
 }

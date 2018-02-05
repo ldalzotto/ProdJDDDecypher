@@ -1,4 +1,4 @@
-import {FileBO} from './FileBO';
+import {SimpleFile} from './SimpleFile';
 
 export class CustomFileReader {
 
@@ -10,14 +10,14 @@ export class CustomFileReader {
     this.fileReader = new FileReader();
   }
 
-  public readFile(): Promise<FileBO> {
+  public readFile(): Promise<SimpleFile> {
     const self: CustomFileReader = this;
 
-    return new Promise<FileBO>((resolve, reject) => {
+    return new Promise<SimpleFile>((resolve, reject) => {
       const fileReader: FileReader = new FileReader();
       fileReader.onload = function (e: Event) {
         const stringToStoreFile: ArrayBuffer = fileReader.result;
-        const file: FileBO = new FileBO(stringToStoreFile, self.fileToRead.name);
+        const file: SimpleFile = new SimpleFile(stringToStoreFile, self.fileToRead.name);
         resolve(file);
       };
       fileReader.readAsArrayBuffer(self.fileToRead);

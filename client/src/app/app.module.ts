@@ -13,6 +13,8 @@ import {NotAvailableComponent} from './not-available/not-available.component';
 import {FileChangeDirective} from './decypher/directives/FileChangeDirective';
 import {DecypherFileApiService} from './decypher/api/DecypherFileApiService';
 import {HttpClientModule} from '@angular/common/http';
+import {LoggerService} from "./logger/logger.service";
+import {ConsoleLoggerService} from "./logger/console-logger.service";
 
 @NgModule({
   declarations: [
@@ -35,7 +37,8 @@ import {HttpClientModule} from '@angular/common/http';
     MatInputModule,
     MatIconModule
   ],
-  providers: [HttpClientModule, DecypherFileApiService],
+  providers: [HttpClientModule, DecypherFileApiService,
+    {provide: LoggerService, useClass: ConsoleLoggerService}],
   bootstrap: [AppComponent]
 })
 export class AppModule {
